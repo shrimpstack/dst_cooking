@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>烹飪鍋模擬器</title>
+    <meta charset="utf-8">
+    <script src="./universal.js"></script>
+    <script src="./食材.js"></script>
+    <script src="./食譜.js"></script>
+    <style>
+      body {
+        margin: 0;
+        display: grid;
+        grid-template-columns: auto 1fr 605px;
+        grid-template-rows: auto 1fr;
+        grid-template-areas: "鍋子 食材 食譜" "結果 食材 食譜";
+        height: 100vh;
+        background: #392c26;
+      }
+      #鍋子 {
+        grid-area: 鍋子;
+        margin: 32px 16px;
+      }
+      #鍋子格區 {
+        padding: 16px;
+        display: flex;
+        gap: 12px;
+        background: radial-gradient(#ede1c4 50%, #b7946c);
+        border: 3px solid #000000;
+        box-shadow: inset 0 0 0 2px #816342;
+      }
+      #鍋子 label {
+        display: flex;
+        align-items: center;
+        margin: 8px 8px 0;
+        color: #dbc7a7;
+        font-weight: bold;
+        gap: 4px;
+      }
+      #鍋子 label input {
+        all: unset;
+        width: 1em;
+        height: 1em;
+        background: #ede1c4;
+        border-radius: 3px;
+        border: 1px solid #816342;
+        position: relative;
+      }
+      #鍋子 label input:checked:after {
+        content: "";
+        background: #816342;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        clip-path: polygon(0 50%, 42% 100%, 50% 100%, 100% 0, 80% 0, 42% 75%, 15% 41%);
+      }
+      #結果 {
+        grid-area: 結果;
+        display: grid;
+        gap: 8px;
+        padding: 8px;
+        align-content: start;
+        color: #dbc7a7;
+        font-weight: bold;
+        justify-content: center;
+      }
+      .食譜顯示 {
+        background: radial-gradient(#ede1c4 50%, #b7946c);
+        border: 3px solid #000000;
+        box-shadow: inset 0 0 0 2px #816342;
+        padding: 8px;
+        gap: 2px 8px;
+        display: grid;
+        grid-template-columns: auto repeat(6, auto);
+        align-items: center;
+        color: #583018;
+        box-sizing: border-box;
+        width: 282px;
+      }
+      .食譜顯示 sq { grid-area: 1 / 1 / 2 span; }
+      .食譜顯示 span:nth-child(-n + 4) { grid-column: 2 span; }
+      .食譜顯示 span:nth-last-child(-n + 3) { grid-column: 3 span; }
+      .食譜顯示 span:last-child { grid-column: 7 span; margin-top: 6px; }
+      #食材 {
+        grid-area: 食材;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, 48px);
+        align-content: start;
+        gap: 8px;
+        padding: 16px;
+        overflow: auto;
+      }
+      #食材 h3 {
+        margin: 0;
+        text-align: center;
+        line-height: 48px;
+        color: #fff;
+        grid-column: 2 span;
+      }
+      #食譜 {
+        grid-area: 食譜;
+        display: grid;
+        grid-template-columns: auto auto;
+        gap: 8px;
+        padding: 8px;
+        font-weight: bold;
+        overflow: auto;
+      }
+      sq {
+        display: block;
+        width: 48px;
+        height: 48px;
+        background: var(--img, none) no-repeat center / 43px, url(./imgs/格子.png);
+      }
+      sq[name] {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="鍋子">
+      <div id="鍋子格區"></div>
+      <label><input id="是沃特" type="checkbox" oninput="更新結果()"/>沃特</label>
+    </div>
+    <div id="結果"></div>
+    <div id="食材"></div>
+    <div id="食譜"></div>
+    <script>
+      const 鍋子格 = [];
+      window.addEventListener("load", () => {
+        for(let f=0; f<4; f++) 鍋子格[f] = 生成鍋子格();
+        處理食譜();
+        顯示全食譜();
+        顯示食材();
+      });
+      function 生成格(type = "食材") {
+        let 格 = new_el("sq");
+        Object.defineProperty(格, "name", {
+          get: () => 格.getAttribute("name"),
+          set: (new_name) => {
+            if(!new_name) {
+              格.removeAttribute("name");
+              格.removeAttribute("style");
+            }
+            else {
+              格.setAttribute("name", new_name);
+              格.style.setProperty("--img", `url(./imgs/${type}/${new_name}.png)`);
+            }
+          },
+        });
+        return 格;
+      }
+      function 生成鍋子格() {
+        let 格 = 生成格();
+        鍋子格區.append(格);
+        格.addEventListener("click", () => 取下食材(格));
+        return 格;
+      }
+      function 取下食材(el) {
+        el.name = null;
+        更新結果();
+      }
+      function 顯示食材() {
+        食材.innerHTML = "";
+        new_el_to_el(食材, "h3", "肉 0.25"); 生成("肉", 0.25);
+        new_el_to_el(食材, "h3", "肉 0.5"); 生成("肉", 0.5);
+        new_el_to_el(食材, "h3", "肉 1"); 生成("肉", 1);
+        new_el_to_el(食材, "h3", "魚 0.25"); 生成("魚", 0.25);
+        new_el_to_el(食材, "h3", "魚 0.5"); 生成("魚", 0.5);
+        new_el_to_el(食材, "h3", "魚 1"); 生成("魚", 1);
+        new_el_to_el(食材, "h3", "水果 0.5"); 生成("水果", 0.5);
+        new_el_to_el(食材, "h3", "水果 1"); 生成("水果", 1);
+        new_el_to_el(食材, "h3", "蔬菜 0.5"); 生成("蔬菜", 0.5);
+        new_el_to_el(食材, "h3", "蔬菜 1"); 生成("蔬菜", 1);
+        new_el_to_el(食材, "h3", "蛋"); 生成("蛋");
+        new_el_to_el(食材, "h3", "糖精"); 生成("糖精");
+        new_el_to_el(食材, "h3", "乳製品"); 生成("乳製品");
+        new_el_to_el(食材, "h3", "怪物"); 生成("怪物");
+        new_el_to_el(食材, "h3", "冰"); 生成("冰");
+        new_el_to_el(食材, "h3", "裝飾"); 生成("裝飾");
+        new_el_to_el(食材, "h3", "不可食用"); 生成("不可食用");
+        new_el_to_el(食材, "h3", "魔法"); 生成("魔法");
+        new_el_to_el(食材, "h3", "種子"); 生成("種子");
+        function 生成(key, value) {
+          Object.entries(食材資料).filter(([name, vals]) => {
+            if(value) return vals[key] == value;
+            else return !!vals[key];
+          })
+          .forEach(([name, vals]) => {
+            let 格 = 生成格();
+            食材.append(格);
+            格.name = name;
+            格.addEventListener("click", () => 放上食材(name));
+          });
+        }
+      }
+      function 放上食材(name) {
+        let 空格 = 鍋子格.find(格 => !格.name);
+        if(!空格) return;
+        空格.name = name;
+        更新結果();
+      }
+      const 空係數 = Object.values(食材資料).reduce((p, 資料) => {
+        Object.keys(資料).forEach(key => p[key] = 0);
+        return p;
+      }, {});
+      function 處理食譜() {
+        Object.entries(食譜資料).forEach(([name, obj]) => {
+          obj.name = name;
+          Object.keys(空係數).forEach(key => {
+            obj.係數要求 = obj.係數要求.replace(new RegExp(`^${key}|(?: )${key}|(?:\\()${key}`, "g"), "係數." + key);
+          });
+        });
+      }
+      function 更新結果() {
+        let 使用食材 = 鍋子格.map(格 => 格.name).filter(v => v);
+        if(使用食材.length < 4) { 結果.innerHTML = "未填滿烹飪鍋"; return; }
+        結果.innerHTML = "";
+        let 係數 = {...空係數};
+        使用食材.forEach(name => {
+          Object.entries(食材資料[name]).forEach(([p, v]) => 係數[p] += v);
+        });
+        let 符合 = Object.values(食譜資料).filter(資料 => !資料.係數要求 || eval(資料.係數要求));
+        if(!是沃特.checked) 符合 = 符合.filter(資料 => !資料.沃專屬);
+        let 最大優先權 = Math.max( ...符合.map(({優先權})=> 優先權) );
+        符合 = 符合.filter(({優先權}) => 優先權 == 最大優先權);
+        符合.forEach(資料 => 結果.append(生成食譜顯示(資料)));
+      }
+      function 生成食譜顯示(資料) {
+        let 格 = 生成格("料理");
+        格.name = 資料.name;
+        return new_el("div.食譜顯示", [
+          格,
+          new_el("span", "HP " + 資料.HP),
+          new_el("span", "FL " + 資料.FL),
+          new_el("span", "SAN " + 資料.SAN),
+          new_el("span", "期限 " + 資料.期限),
+          new_el("span", "製作 " + 資料.時間),
+          new_el("span", 資料.係數要求.replace(/係數\./g, "").replace(/\=\=/g, "=").replace(/ \&\&/g, " , ").replace(/\|/g, "或")),
+        ]);
+      }
+      function 顯示全食譜() {
+        食譜.innerHTML = "";
+        Object.values(食譜資料).forEach(資料 => {
+          食譜.append(生成食譜顯示(資料));
+        });
+      }
+    </script>
+  </body>
+</html>
