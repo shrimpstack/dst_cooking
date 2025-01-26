@@ -11,7 +11,7 @@
   <body>
     <div id="鍋子">
       <div id="鍋子格區"></div>
-      <label><input id="是沃特" type="checkbox" oninput="更新結果()"/>沃特</label>
+      <label><input id="是沃特" type="checkbox" oninput="更新結果(); 顯示全食譜();"/>沃特</label>
     </div>
     <div id="結果"></div>
     <div id="食材"></div>
@@ -141,7 +141,9 @@
       function 顯示全食譜() {
         食譜列.innerHTML = "";
         let key = 食譜排列.value;
-        Object.values(食譜資料).sort((資料A, 資料B) => 資料B[key] - 資料A[key])
+        let 資料列 = Object.values(食譜資料);
+        if(!是沃特.checked) 資料列 = 資料列.filter(資料 => !資料.沃專屬);
+        資料列.sort((資料A, 資料B) => 資料B[key] - 資料A[key])
         .forEach(資料 => {
           食譜列.append(生成食譜顯示(資料));
         });
