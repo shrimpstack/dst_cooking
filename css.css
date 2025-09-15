@@ -77,23 +77,39 @@ body {
 
 #食材 {
   grid-area: 食材;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, 48px);
-  align-content: start;
-  gap: 8px;
   padding: 16px;
   overflow: auto;
 }
 #食材::-webkit-scrollbar {
   display: none;
 }
+#食材 .分類 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 48px);
+  align-content: start;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 12px 0;
+  line-height: 1;
+}
 #食材 h3 {
   margin: 0;
   text-align: center;
-  line-height: 48px;
   color: #fff;
   grid-column: 1 / 2 span;
 }
+#食材 h3:not(:first-child) {
+  border-top: 1px dashed #fff5;
+}
+.可選食材 {
+  text-align: center;
+  color: #fff;
+  font-size: 12px;
+}
+.可選食材 .名稱 {
+  padding-top: 4px;
+}
+
 #食譜 {
   grid-area: 食譜;
   display: grid;
@@ -110,6 +126,11 @@ body {
   gap: 8px;
   font-weight: bold;
   overflow: auto;
+}
+@media (max-width: 1200px) {
+  #食譜列 {
+    grid-template-columns: auto;
+  }
 }
 #食譜列::-webkit-scrollbar {
   display: none;

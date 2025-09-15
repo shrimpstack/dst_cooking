@@ -11,7 +11,7 @@
   <body>
     <div id="鍋子">
       <div id="鍋子格區"></div>
-      <label><input id="是沃特" type="checkbox" oninput="更新結果(); 顯示全食譜();"/>沃特</label>
+      <label><input id="是沃利" type="checkbox" oninput="更新結果(); 顯示全食譜();"/>沃利</label>
     </div>
     <div id="結果"></div>
     <div id="食材"></div>
@@ -80,15 +80,16 @@
         new_el_to_el(食材, "h3", "魔法"); 生成("魔法");
         new_el_to_el(食材, "h3", "種子"); 生成("種子");
         function 生成(key, value) {
+          let 分類 = new_el_to_el(食材, "div.分類");
           Object.entries(食材資料).filter(([name, vals]) => {
             if(value) return vals[key] == value;
             else return !!vals[key];
           })
           .forEach(([name, vals]) => {
             let 格 = 生成格();
-            食材.append(格);
             格.name = name;
             格.addEventListener("click", () => 放上食材(name));
+            new_el_to_el(分類, "div.可選食材", [ 格, new_el("div.名稱", name) ]);
           });
         }
       }
@@ -119,7 +120,7 @@
           Object.entries(食材資料[name]).forEach(([p, v]) => 係數[p] += v);
         });
         let 符合 = Object.values(食譜資料).filter(資料 => !資料.係數要求 || eval(資料.係數要求));
-        if(!是沃特.checked) 符合 = 符合.filter(資料 => !資料.沃專屬);
+        if(!是沃利.checked) 符合 = 符合.filter(資料 => !資料.沃專屬);
         let 最大優先權 = Math.max( ...符合.map(({優先權})=> 優先權) );
         符合 = 符合.filter(({優先權}) => 優先權 == 最大優先權);
         符合.forEach(資料 => 結果.append(生成食譜顯示(資料)));
@@ -142,7 +143,7 @@
         食譜列.innerHTML = "";
         let key = 食譜排列.value;
         let 資料列 = Object.values(食譜資料);
-        if(!是沃特.checked) 資料列 = 資料列.filter(資料 => !資料.沃專屬);
+        if(!是沃利.checked) 資料列 = 資料列.filter(資料 => !資料.沃專屬);
         資料列.sort((資料A, 資料B) => 資料B[key] - 資料A[key])
         .forEach(資料 => {
           食譜列.append(生成食譜顯示(資料));
