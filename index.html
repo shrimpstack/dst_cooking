@@ -14,6 +14,7 @@
       <label><input id="是沃利" type="checkbox" oninput="更新結果(); 顯示全食譜();"/>沃利</label>
     </div>
     <div id="結果"></div>
+    <div id="食材類型"></div>
     <div id="食材"></div>
     <div id="食譜">
       <select id="食譜排列" onchange="顯示全食譜()">
@@ -58,29 +59,50 @@
         el.name = null;
         更新結果();
       }
+      function 顯示食材分類() {
+        let 類型 = ["全部", "肉", "魚", "水果", "蔬菜", "配料", "其他"];
+        let 按鈕列 = 類型.map(類型名稱 => {
+          let btn = new_el_to_el(食材類型, "button", 類型名稱);
+          btn.addEventListener("click", () => {
+            按鈕列.forEach(el => el.classList.remove("active"));
+            btn.classList.add("active");
+            依照分類切換食材顯示(類型名稱);
+          });
+          return btn;
+        });
+        按鈕列[0].click();
+      }
+      function 依照分類切換食材顯示(類型名稱) {
+        find_all(食材, "h3, .分類").forEach(el => el.classList.toggle("hidden", 類型名稱 != "全部"));
+        find_all(食材, "." + 類型名稱).forEach(el => el.classList.remove("hidden"));
+      }
       function 顯示食材() {
         食材.innerHTML = "";
-        new_el_to_el(食材, "h3", "肉 0.25"); 生成("肉", 0.25);
-        new_el_to_el(食材, "h3", "肉 0.5"); 生成("肉", 0.5);
-        new_el_to_el(食材, "h3", "肉 1"); 生成("肉", 1);
-        new_el_to_el(食材, "h3", "魚 0.25"); 生成("魚", 0.25);
-        new_el_to_el(食材, "h3", "魚 0.5"); 生成("魚", 0.5);
-        new_el_to_el(食材, "h3", "魚 1"); 生成("魚", 1);
-        new_el_to_el(食材, "h3", "水果 0.5"); 生成("水果", 0.5);
-        new_el_to_el(食材, "h3", "水果 1"); 生成("水果", 1);
-        new_el_to_el(食材, "h3", "蔬菜 0.5"); 生成("蔬菜", 0.5);
-        new_el_to_el(食材, "h3", "蔬菜 1"); 生成("蔬菜", 1);
-        new_el_to_el(食材, "h3", "蛋"); 生成("蛋");
-        new_el_to_el(食材, "h3", "糖精"); 生成("糖精");
-        new_el_to_el(食材, "h3", "乳製品"); 生成("乳製品");
-        new_el_to_el(食材, "h3", "怪物"); 生成("怪物");
-        new_el_to_el(食材, "h3", "冰"); 生成("冰");
-        new_el_to_el(食材, "h3", "裝飾"); 生成("裝飾");
-        new_el_to_el(食材, "h3", "不可食用"); 生成("不可食用");
-        new_el_to_el(食材, "h3", "魔法"); 生成("魔法");
-        new_el_to_el(食材, "h3", "種子"); 生成("種子");
+        顯示食材分類();
+        new_el_to_el(食材, "h3.肉", "肉 0.25"); 生成("肉", 0.25);
+        new_el_to_el(食材, "h3.肉", "肉 0.5"); 生成("肉", 0.5);
+        new_el_to_el(食材, "h3.肉", "肉 1"); 生成("肉", 1);
+        new_el_to_el(食材, "h3.魚", "魚 0.25"); 生成("魚", 0.25);
+        new_el_to_el(食材, "h3.魚", "魚 0.5"); 生成("魚", 0.5);
+        new_el_to_el(食材, "h3.魚", "魚 1"); 生成("魚", 1);
+        new_el_to_el(食材, "h3.水果", "水果 0.5"); 生成("水果", 0.5);
+        new_el_to_el(食材, "h3.水果", "水果 1"); 生成("水果", 1);
+        new_el_to_el(食材, "h3.蔬菜", "蔬菜 0.5"); 生成("蔬菜", 0.5);
+        new_el_to_el(食材, "h3.蔬菜", "蔬菜 1"); 生成("蔬菜", 1);
+        new_el_to_el(食材, "h3.配料", "蛋"); 生成("蛋");
+        new_el_to_el(食材, "h3.配料", "糖精"); 生成("糖精");
+        new_el_to_el(食材, "h3.配料", "乳製品"); 生成("乳製品");
+        new_el_to_el(食材, "h3.配料", "冰"); 生成("冰");
+        new_el_to_el(食材, "h3.配料", "種子"); 生成("種子");
+        new_el_to_el(食材, "h3.其他", "怪物"); 生成("怪物");
+        new_el_to_el(食材, "h3.其他", "裝飾"); 生成("裝飾");
+        new_el_to_el(食材, "h3.其他", "不可食用"); 生成("不可食用");
+        new_el_to_el(食材, "h3.其他", "魔法"); 生成("魔法");
         function 生成(key, value) {
           let 分類 = new_el_to_el(食材, "div.分類");
+          if(["蛋", "糖精", "乳製品", "冰", "種子"].includes(key)) 分類.classList.add("配料");
+          else if(["怪物", "裝飾", "不可食用", "魔法"].includes(key)) 分類.classList.add("其他");
+          else 分類.classList.add(key);
           Object.entries(食材資料).filter(([name, vals]) => {
             if(value) return vals[key] == value;
             else return !!vals[key];
