@@ -106,6 +106,9 @@ body {
   padding: 16px;
   overflow: auto;
 }
+#食材.hidden {
+  display: none;
+}
 #食材::-webkit-scrollbar {
   display: none;
 }
@@ -128,13 +131,52 @@ body {
 #食材 .分類.hidden, #食材 h3.hidden {
   display: none;
 }
-.可選食材 {
+.格與名稱 {
   text-align: center;
   color: #fff;
   font-size: 12px;
 }
-.可選食材 .名稱 {
+.格與名稱 .名稱 {
   padding-top: 4px;
+  color: #dbc7a7;
+}
+
+#推薦做法 {
+  grid-area: 食材;
+  padding: 16px;
+  overflow: auto;
+}
+#推薦做法::-webkit-scrollbar {
+  display: none;
+}
+#推薦做法.hidden {
+  display: none;
+}
+#推薦做法 .做法 {
+  display: grid;
+  gap: 16px;
+}
+#推薦做法 .做法:not(:first-child) {
+  margin-top: 16px;
+  border-top: 1px dashed #fff5;
+  padding-top: 16px;
+}
+#推薦做法 .做法圖示 {
+  display: flex;
+  grid-template-columns: repeat(auto-fit, auto);
+  align-content: start;
+  gap: 8px;
+  line-height: 1;
+}
+#推薦做法 .做法圖示 span {
+  color: #dbc7a7;
+  align-self: center;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+}
+#推薦做法 .說明 {
+  color: #dbc7a7;
 }
 
 #食譜 {
