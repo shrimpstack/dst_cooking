@@ -135,6 +135,7 @@ body {
   text-align: center;
   color: #fff;
   font-size: 12px;
+  width: 48px;
 }
 .格與名稱 .名稱 {
   padding-top: 4px;
@@ -156,15 +157,17 @@ body {
   display: grid;
   gap: 16px;
 }
-#推薦做法 .做法:not(:first-child) {
+#推薦做法 .做法.hidden {
+  display: none;
+}
+#推薦做法 .做法 {
   margin-top: 16px;
   border-top: 1px dashed #fff5;
   padding-top: 16px;
 }
 #推薦做法 .做法圖示 {
   display: flex;
-  grid-template-columns: repeat(auto-fit, auto);
-  align-content: start;
+  flex-wrap: wrap;
   gap: 8px;
   line-height: 1;
 }
